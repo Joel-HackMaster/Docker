@@ -2,7 +2,7 @@
 FROM php:8.2-fpm
 
 ARG user
-ARG uid
+ARG uid=1000
 
 # Copiamos los archivos package.json composer.json y composer-lock.json a /var/www/
 

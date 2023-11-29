@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  server:
+    image: nginx:stable-alpine
+    container_name: nginx
+    ports:
+      - 8000:80
+    volumes:
+      - ./:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/default.conf
+    depends_on:
+      - app
+      - mysql
+    networks:
+      - networkapp
+  
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: laravelmix
+      MYSQL_USER: db_user
+      MYSQL_PASSWORD: db_password
+      MYSQL_ROOT_PASSWORD: db_root_password
+    ports:
+      - 33069:3306
+    volumes:
+      - dbdatalaravel:/var/lib/mysql
+    networks:
+      - networkapp
+    
+  
+  app:
+    build:
+      args:
+        user: laraveluser
+        uid: 1000
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: applaravel
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www
+    networks:
+      - networkapp
+    
+networks:
+  networkapp: 
+  
+volumes:
+  dbdatalaravel:
